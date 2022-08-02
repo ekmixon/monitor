@@ -74,12 +74,12 @@ cfile = open(FILE)
 for (arch, mode, comment, syntax) in all_tests:
     try:
         request = sys.argv[1]
-        if not request in comment.lower():
+        if request not in comment.lower():
             continue
     except:
         pass
 
-    print("Platform: %s" %comment)
+    print(f"Platform: {comment}")
 
     try:
         md = Cs(arch, mode)
@@ -90,7 +90,7 @@ for (arch, mode, comment, syntax) in all_tests:
 
         # warm up few times
         cfile.seek(0)
-        for i in xrange(3):
+        for _ in xrange(3):
             code = get_code(cfile, 128)
             #print to_hex(code)
             #print
@@ -98,7 +98,7 @@ for (arch, mode, comment, syntax) in all_tests:
 
         # start real benchmark
         c_t = 0
-        for i in xrange(50000):
+        for _ in xrange(50000):
             code = get_code(cfile, 128)
             #print to_hex(code)
             #print
@@ -107,12 +107,12 @@ for (arch, mode, comment, syntax) in all_tests:
             cs(md, code)
             c_t += time() - t1
 
-        print "Benchmark - full obj:", c_t, "seconds"
+        md = Cs(arch, mode)
         print
 
         cfile.seek(0)
         c_t = 0
-        for i in xrange(50000):
+        for _ in xrange(50000):
             code = get_code(cfile, 128)
             #print to_hex(code)
             #print
@@ -121,7 +121,7 @@ for (arch, mode, comment, syntax) in all_tests:
             cs_lite(md, code)
             c_t += time() - t1
 
-        print "Benchmark - lite:", c_t, "seconds"
+        md = Cs(arch, mode)
         print
     except CsError as e:
-        print("ERROR: %s" %e)
+        print(f"ERROR: {e}")

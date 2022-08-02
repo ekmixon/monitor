@@ -100,8 +100,8 @@ def test_class():
 
     for (arch, mode, code, comment, syntax) in all_tests:
         print("*" * 16)
-        print("Platform: %s" % comment)
-        print("Code: %s" % to_hex(code))
+        print(f"Platform: {comment}")
+        print(f"Code: {to_hex(code)}")
         print("Disasm:")
 
         try:
@@ -116,7 +116,7 @@ def test_class():
                 print ()
             print ("0x%x:\n" % (insn.address + insn.size))
         except CsError as e:
-            print("ERROR: %s" % e)
+            print(f"ERROR: {e}")
 
 
 if __name__ == '__main__':

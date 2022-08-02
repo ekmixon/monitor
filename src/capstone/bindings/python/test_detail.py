@@ -49,13 +49,13 @@ def print_detail(insn):
     if len(insn.regs_read) > 0:
         print("\tImplicit registers read: ", end=''),
         for m in insn.regs_read:
-            print("%s " % insn.reg_name(m), end=''),
+            (print(f"{insn.reg_name(m)} ", end=''), )
         print()
 
     if len(insn.regs_write) > 0:
         print("\tImplicit registers modified: ", end=''),
         for m in insn.regs_write:
-            print("%s " % insn.reg_name(m), end=''),
+            (print(f"{insn.reg_name(m)} ", end=''), )
         print()
 
     if len(insn.groups) > 0:
@@ -69,7 +69,7 @@ def print_detail(insn):
 def test_class():
     for (arch, mode, code, comment, syntax) in all_tests:
         print('*' * 40)
-        print("Platform: %s" % comment)
+        print(f"Platform: {comment}")
         print("Disasm:")
 
         try:
@@ -87,7 +87,7 @@ def test_class():
 
             print()
         except CsError as e:
-            print("ERROR: %s" % e)
+            print(f"ERROR: {e}")
 
 if __name__ == '__main__':
     test_class()

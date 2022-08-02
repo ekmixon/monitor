@@ -81,7 +81,7 @@ cfile = open(FILE)
 for (arch, mode, comment, syntax) in all_tests:
     try:
         request = sys.argv[1]
-        if not request in comment.lower():
+        if request not in comment.lower():
             continue
     except:
         pass
@@ -107,7 +107,7 @@ for (arch, mode, comment, syntax) in all_tests:
                     cs(md, code)
 
         # test disasm_lite()
-        print("Fuzzing disasm_lite() @platform: %s" %comment)
+        print(f"Fuzzing disasm_lite() @platform: {comment}")
         for ii in INTERVALS:
             print("Interval: %u" %ii)
             for j in xrange(1, TIMES):
@@ -120,4 +120,4 @@ for (arch, mode, comment, syntax) in all_tests:
                     cs_lite(md, code)
 
     except CsError as e:
-        print("ERROR: %s" %e)
+        print(f"ERROR: {e}")

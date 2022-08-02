@@ -109,7 +109,7 @@ def compile_file(fname, arch):
                 f.write('    "free": "yes"\n')
             f.write('\n')
 
-    output_exe = os.path.join(arch, fname.replace('.c', '.%s' % kw.EXTENSION))
+    output_exe = os.path.join(arch, fname.replace('.c', f'.{kw.EXTENSION}'))
 
     compiler = kw.CC86 if arch == 'x86' else kw.CC64
     files = ' '.join(kw.OBJECTS)
@@ -117,7 +117,7 @@ def compile_file(fname, arch):
     ALL.append(output_exe)
 
     return [
-        '%s: %s %s' % (output_exe, fname, files),
+        f'{output_exe}: {fname} {files}',
         '\t%s -o %s %s %s %s' % (compiler, output_exe, fname, files, args),
         '',
     ]

@@ -46,7 +46,7 @@ class DefinitionProcessor(object):
         return parser
 
     def template(self, name):
-        return self.templ_env.get_template('%s.jinja2' % name)
+        return self.templ_env.get_template(f'{name}.jinja2')
 
     def render(self, template, path, **kwargs):
         with open(path, 'wb') as f:
@@ -161,7 +161,7 @@ class SignatureProcessor(object):
                     argtype.append('*')
 
             if argname.endswith(','):
-                raise Exception('Parameter line ends with a comma: %s' % line)
+                raise Exception(f'Parameter line ends with a comma: {line}')
 
             ret.append(dict(argtype=' '.join(argtype).strip(),
                             argname=argname.strip(),
@@ -208,7 +208,7 @@ class SignatureProcessor(object):
 
     def _parse_prelog(self, text):
         argtype, argname, parameter = text.split(' ', 2)
-        if argtype != 'b' and argtype != '!b':
+        if argtype not in ['b', '!b']:
             raise Exception('Prelog parameter must be a buffer.')
 
         length, buffer = parameter.split(',')
@@ -248,10 +248,10 @@ class SignatureProcessor(object):
             raise Exception('Child node must be a literal block.')
 
         key = paragraph.astext().replace(':', '').lower()
-        if not hasattr(self, '_parse_' + key):
+        if not hasattr(self, f'_parse_{key}'):
             raise Exception('No parser known for the %r section.' % key)
 
-        return key, getattr(self, '_parse_' + key)(literal_block.astext())
+        return key, getattr(self, f'_parse_{key}')(literal_block.astext())
 
     def _prevent_overwrite(self, key, value, global_values):
         if key != 'signature' or key not in global_values:
@@ -455,30 +455,33 @@ class SignatureProcessor(object):
         # Add each instruction-level hook.
         last = None
         for insn in self.insns.methods:
-            logging = []
-
-            # We take the logging of the first entry.
-            for param in insn["entries"][0]["logging"]:
-                logging.append({
+            logging = [
+                {
                     "argtype": param["type"],
                     "argname": param["name"],
-                })
+                }
+                for param in insn["entries"][0]["logging"]
+            ]
 
-            sigs.append({
-                "library": insn["module_clean"],
-                "apiname": insn["funcname"],
-                "ignore": last == insn["funcname"],
-                "is_insn": True,
-                "is_hook": True,
-                "signature": {
-                    "category": insn["category"],
-                    "library": insn["module"],
-                    "special": False,
-                    "mode": "HOOK_MODE_%s" % insn["mode"].upper(),
-                    "callback": "module",
-                },
-                "logging": logging,
-            })
+
+            sigs.append(
+                {
+                    "library": insn["module_clean"],
+                    "apiname": insn["funcname"],
+                    "ignore": last == insn["funcname"],
+                    "is_insn": True,
+                    "is_hook": True,
+                    "signature": {
+                        "category": insn["category"],
+                        "library": insn["module"],
+                        "special": False,
+                        "mode": f'HOOK_MODE_{insn["mode"].upper()}',
+                        "callback": "module",
+                    },
+                    "logging": logging,
+                }
+            )
+
             last = insn["funcname"]
 
         # Assign hook indices accordingly (in a sorted manner).

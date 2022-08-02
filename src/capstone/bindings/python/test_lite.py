@@ -40,7 +40,7 @@ all_tests = (
 def test_cs_disasm_quick():
     for (arch, mode, code, comment, syntax) in all_tests:
         print('*' * 40)
-        print("Platform: %s" % comment)
+        print(f"Platform: {comment}")
         print("Disasm:"),
         print(to_hex(code))
         for (addr, size, mnemonic, op_str) in cs_disasm_lite(arch, mode, code, 0x1000):
@@ -52,8 +52,8 @@ def test_cs_disasm_quick():
 def test_class():
     for (arch, mode, code, comment, syntax) in all_tests:
         print('*' * 16)
-        print("Platform: %s" % comment)
-        print("Code: %s" % to_hex(code))
+        print(f"Platform: {comment}")
+        print(f"Code: {to_hex(code)}")
         print("Disasm:")
 
         try:
@@ -68,7 +68,7 @@ def test_class():
             print("0x%x:" % (addr + size))
             print()
         except CsError as e:
-            print("ERROR: %s" % e)
+            print(f"ERROR: {e}")
 
 
 # test_cs_disasm_quick()

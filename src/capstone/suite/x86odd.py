@@ -52,8 +52,8 @@ def to_hex(s):
 # ## Test cs_disasm_quick()
 def test_cs_disasm_quick():
     for (arch, mode, code, comment, syntax) in all_tests:
-        print("Platform: %s" % comment)
-        print("Code: %s" %(to_hex(code))),
+        print(f"Platform: {comment}")
+        (print(f"Code: {to_hex(code)}"), )
         print("Disasm:")
         for (addr, size, mnemonic, op_str) in cs_disasm_lite(arch, mode, code, 0x1000):
             print("0x%x:\t%s\t%s" % (addr, mnemonic, op_str))

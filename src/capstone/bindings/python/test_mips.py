@@ -26,9 +26,7 @@ def print_insn_detail(insn):
 
     if len(insn.operands) > 0:
         print("\top_count: %u" % len(insn.operands))
-        c = -1
-        for i in insn.operands:
-            c += 1
+        for c, i in enumerate(insn.operands):
             if i.type == MIPS_OP_REG:
                 print("\t\toperands[%u].type: REG = %s" % (c, insn.reg_name(i.reg)))
             if i.type == MIPS_OP_IMM:
@@ -47,8 +45,8 @@ def print_insn_detail(insn):
 def test_class():
     for (arch, mode, code, comment) in all_tests:
         print("*" * 16)
-        print("Platform: %s" % comment)
-        print("Code: %s" % to_hex(code))
+        print(f"Platform: {comment}")
+        print(f"Code: {to_hex(code)}")
         print("Disasm:")
 
         try:
@@ -60,7 +58,7 @@ def test_class():
 
             print("0x%x:\n" % (insn.address + insn.size))
         except CsError as e:
-            print("ERROR: %s" % e)
+            print(f"ERROR: {e}")
 
 
 if __name__ == '__main__':

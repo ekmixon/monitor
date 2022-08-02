@@ -51,59 +51,58 @@ def gen(templ):
     global include, INCL_DIR
     for target in include:
         prefix = templ[target]
-        outfile = open(templ['out_file'] %(prefix), 'w')
-        outfile.write(templ['header'] % (prefix))
+        with open(templ['out_file'] %(prefix), 'w') as outfile:
+            outfile.write(templ['header'] % (prefix))
 
-        lines = open(INCL_DIR + target).readlines()
+            lines = open(INCL_DIR + target).readlines()
 
-        count = 0
-        for line in lines:
-            line = line.strip()
+            count = 0
+            for line in lines:
+                line = line.strip()
 
-            if line.startswith(MARKUP):  # markup for comments
-                outfile.write("\n%s%s%s\n" %(templ['comment_open'], \
-                            line.replace(MARKUP, ''), templ['comment_close']))
-                continue
+                if line.startswith(MARKUP):  # markup for comments
+                    outfile.write("\n%s%s%s\n" %(templ['comment_open'], \
+                                line.replace(MARKUP, ''), templ['comment_close']))
+                    continue
 
-            if line == '' or line.startswith('//'):
-                continue
+                if line == '' or line.startswith('//'):
+                    continue
 
-            if not line.startswith(prefix.upper()):
-                continue
+                if not line.startswith(prefix.upper()):
+                    continue
 
-            tmp = line.strip().split(',')
-            for t in tmp:
-                t = t.strip()
-                if not t or t.startswith('//'): continue
-                f = re.split('\s+', t)
+                tmp = line.strip().split(',')
+                for t in tmp:
+                    t = t.strip()
+                    if not t or t.startswith('//'): continue
+                    f = re.split('\s+', t)
 
-                if f[0].startswith(prefix.upper()):
-                    if len(f) > 1 and f[1] not in '//=':
-                        print("Error: Unable to convert %s" % f)
-                        continue
-                    elif len(f) > 1 and f[1] == '=':
-                        rhs = ''.join(f[2:])
-                    else:
-                        rhs = str(count)
-                        count += 1
+                    if f[0].startswith(prefix.upper()):
+                        if len(f) > 1 and f[1] not in '//=':
+                            print(f"Error: Unable to convert {f}")
+                            continue
+                        elif len(f) > 1 and f[1] == '=':
+                            rhs = ''.join(f[2:])
+                        else:
+                            rhs = str(count)
+                            count += 1
 
-                    try:
-                        count = int(rhs) + 1
-                        if (count == 1):
-                            outfile.write("\n")
-                    except ValueError:
-                        pass
+                        try:
+                            count = int(rhs) + 1
+                            if (count == 1):
+                                outfile.write("\n")
+                        except ValueError:
+                            pass
 
-                    outfile.write(templ['line_format'] %(f[0].strip(), rhs))
+                        outfile.write(templ['line_format'] %(f[0].strip(), rhs))
 
-        outfile.write(templ['footer'])
-        outfile.close()
+            outfile.write(templ['footer'])
 
 def main():
     try:
         gen(template[sys.argv[1]])
     except:
-        raise RuntimeError("Unsupported binding %s" % sys.argv[1])
+        raise RuntimeError(f"Unsupported binding {sys.argv[1]}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
